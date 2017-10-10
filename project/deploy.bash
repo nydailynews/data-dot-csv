@@ -5,8 +5,8 @@
 ENVIRON='PROD'
 export environ=$ENVIRON
 SERVER='qa'
-DIR='/apps/project/'
-PROJECT='project-dir-name'
+DIR='/apps/'
+PROJECT=''
 LOCATION_OVERRIDE=0
 html_only() { 
     echo ''
