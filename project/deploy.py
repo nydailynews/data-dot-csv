@@ -4,22 +4,13 @@
 import argparse
 import os, sys
 import doctest
-import httplib2
 import json
 
 def main(args):
-    for dirname, dirnames, filenames in os.walk('.'):
+    for dirname, dirnames, filenames in os.walk('csv'):
         for subdirname in dirnames:
             if args.verbose:
                 print dirname, subdirname
-
-            # Skip the endless directory creation on previous years.
-            if args.session and current_session not in dirname:
-                if args.verbose:
-                    print "SKIPPING mkdir on %s" % subdirname
-                continue
-
-            ftp.mkdir(os.path.join(dirname, subdirname))
 
         for filename in filenames:
             if args.verbose:
