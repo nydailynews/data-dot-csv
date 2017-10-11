@@ -26,6 +26,7 @@ def build_parser(args):
                                      description='Concatenate the CSV files for production',
                                      epilog='Examply use: python deploy.py')
     parser.add_argument("-v", "--verbose", dest="verbose", default=False, action="store_true")
+    parser.add_argument("--test", dest="test", default=False, action="store_true")
     parser.add_argument("--freeze", dest="do_freeze", default=False, action="store_true",
                         help="Take a snaphot of the site before uploading.")
     args = parser.parse_args(args)
@@ -34,6 +35,6 @@ def build_parser(args):
 if __name__ == '__main__':
     args = build_parser(sys.argv[1:])
 
-    if args.verbose == True:
+    if args.test == True:
         doctest.testmod(verbose=args.verbose)
     main(args)
