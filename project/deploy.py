@@ -18,15 +18,22 @@ def main(args):
         parent = None
         if project != dirnames[0]:
             parent = os.path.join('csv', dirnames[0], 'data.csv')
-            print "P", parent
-            
+        
+        # Run through all the non-data.csv files first, do data.csv last
+        # because we need that to be complete if we're going to be importing it
+        # anywhere else.
+        # Note that this assumes a two-tier-at-most deep directory tree.
         for filename in filenames:
-            if parent:
-                pass
+            if filename != 'data.csv':
+                project = os.path.join(dirname, filename)
+                
                 
             if args.verbose:
                 print dirname, filename
-                #print(os.path.join(dirname, filename))
+
+        if parent:
+            # Add the above csv to the parent.
+            pass
 
 def build_parser(args):
     """ This method allows us to test the args.
