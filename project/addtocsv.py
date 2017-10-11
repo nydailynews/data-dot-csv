@@ -7,8 +7,8 @@ import argparse
 import unicodecsv as csv
 from cStringIO import StringIO
 
-def main(args):
-    """ For command-line use.
+def addtocsv(args):
+    """ 
         """
     if args:
         if len(args.fns[0]) > 1:
@@ -61,8 +61,8 @@ def main(args):
                         #print "NEW", item['id']
                         writefile.writerow(item)
 
-                
-
+def main(args):
+    addtocsv(args)
 
 def build_parser():
     """ We put the argparse in a method so we can test it

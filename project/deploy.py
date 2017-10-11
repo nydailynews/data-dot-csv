@@ -5,6 +5,7 @@ import argparse
 import os, sys
 import doctest
 import json
+from addtocsv import addtocsv
 
 def main(args):
     for dirname, dirnames, filenames in os.walk('csv/'):
@@ -16,8 +17,13 @@ def main(args):
         project = dirnames[-1]
         parent = None
         if project != dirnames[0]:
-            parent = dirnames[0]
+            parent = os.path.join('csv', dirnames[0], 'data.csv')
+            print "P", parent
+            
         for filename in filenames:
+            if parent:
+                pass
+                
             if args.verbose:
                 print dirname, filename
                 #print(os.path.join(dirname, filename))
