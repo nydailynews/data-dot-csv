@@ -7,14 +7,20 @@ import doctest
 import json
 
 def main(args):
-    for dirname, dirnames, filenames in os.walk('csv'):
+    for dirname, dirnames, filenames in os.walk('csv/'):
         for subdirname in dirnames:
             if args.verbose:
                 print dirname, subdirname
 
+        dirnames = dirname.split('/')[1:]
+        project = dirnames[-1]
+        parent = None
+        if project != dirnames[0]:
+            parent = dirnames[0]
         for filename in filenames:
             if args.verbose:
-                print(os.path.join(dirname, filename))
+                print dirname, filename
+                #print(os.path.join(dirname, filename))
 
 def build_parser(args):
     """ This method allows us to test the args.
