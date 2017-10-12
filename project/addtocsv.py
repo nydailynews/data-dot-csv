@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Compare CSVs, adding any new items in the first CSV to the second CSV.
-import os
+import os, sys
 import doctest
 import argparse
 import unicodecsv as csv
