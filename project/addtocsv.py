@@ -64,25 +64,25 @@ def addtocsv(args):
 def main(args):
     addtocsv(args)
 
-def build_parser():
-    """ We put the argparse in a method so we can test it
-        outside of the command-line.
+def build_parser(args):
+    """ A method to handle argparse.
+        >>> args = build_parser(None)
+        >>> print args.verbose
+        True
         """
     parser = argparse.ArgumentParser(usage='$ python addtocsv.py file-new.csv file-existing.csv',
                                      description='''Takes a list of CSVs passed as args.
                                                   Returns the items that are in the first one but not in the subsequent ones.''',
                                      epilog='')
     parser.add_argument("-v", "--verbose", dest="verbose", default=False, action="store_true")
+    parser.add_argument("--test", dest="test", default=False, action="store_true")
     parser.add_argument("fns", action="append", nargs="*")
-    return parser
+    return parser.parse_args()
 
 if __name__ == '__main__':
-    """ 
-        """
-    parser = build_parser()
-    args = parser.parse_args()
+    args = build_parser(sys.argv)
 
-    if args.verbose:
+    if args.test:
         doctest.testmod(verbose=args.verbose)
 
     main(args)
