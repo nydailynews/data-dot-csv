@@ -24,9 +24,10 @@ def main(args):
         # anywhere else.
         # Note that this assumes a two-tier-at-most deep directory tree.
         for filename in filenames:
-            if filename != 'data.csv':
+            if 'project' in filename:
                 project = os.path.join(dirname, filename)
-                
+            if 'special' in filename:
+                special = os.path.join(dirname, filename)
                 
             if args.verbose:
                 print dirname, filename
