@@ -9,7 +9,8 @@ from cStringIO import StringIO
 
 def addtocsv(args):
     """ 
-        >>> addtocsv({'files': ['tests/data.csv', 'tests/project-longform.csv']})
+        >>> args = build_parser(['tests/data.csv', 'tests/project-longform.csv'])
+        >>> addtocsv(args)
         """
     if len(args.files[0]) > 1:
         new = csv.DictReader(file(args.files[0][0], 'rb'), encoding='utf-8')
@@ -67,9 +68,9 @@ def main(args):
 
 def build_parser(args):
     """ A method to handle argparse.
-        >>> args = build_parser(None)
+        >>> args = build_parser(['--verbose'])
         >>> print args.verbose
-        False
+        True
         """
     parser = argparse.ArgumentParser(usage='$ python addtocsv.py file-new.csv file-existing.csv',
                                      description='''Takes a list of CSVs passed as args.
@@ -78,7 +79,8 @@ def build_parser(args):
     parser.add_argument("-v", "--verbose", dest="verbose", default=False, action="store_true")
     parser.add_argument("--test", dest="test", default=False, action="store_true")
     parser.add_argument("files", action="append", nargs="*")
-    return parser.parse_args()
+    args = parser.parse_args(args)
+    return args
 
 if __name__ == '__main__':
     args = build_parser(sys.argv)
