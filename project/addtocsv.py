@@ -12,8 +12,10 @@ def addtocsv(args):
     """ 
         >>> args = build_parser(['--verbose', 'tests/project-longform.csv', 'tests/data.csv'])
         >>> addtocsv(args)
+        >>> copyfile('tests/bk.csv', args.files[0][1])
         """
     if len(args.files[0]) > 1:
+        print args.files[0]
         new = csv.DictReader(file(args.files[0][0], 'rb'), encoding='utf-8')
         current = csv.DictReader(file(args.files[0][1], 'rb'), encoding='utf-8')
 
@@ -22,22 +24,22 @@ def addtocsv(args):
         # If the new item is already in the current but has some changes, overwrite the current's item.
         to_add = []
         to_update = []
-        ids = []
+        urls = []
         current_items = []
         for i, new in enumerate(new):
             for j, existing in enumerate(current):
                 current_items.append(existing)
                 if new['url'] == existing['url']:
-                    if new['url'] not in ids:
-                        ids.append(new['url'])
+                    if new['url'] not in urls:
+                        urls.append(new['url'])
                         to_update.append(new)
                 else:
-                    if new['url'] not in ids:
-                        ids.append(new['url'])
+                    if new['url'] not in urls:
+                        urls.append(new['url'])
                         to_add.append(new)
             else:
-                if new['url'] not in ids:
-                    ids.append(new['url'])
+                if new['url'] not in urls:
+                    urls.append(new['url'])
                     to_add.append(new)
 
         # Write the current csv
@@ -52,14 +54,14 @@ def addtocsv(args):
             current = csv.DictReader(file(args.files[0][1], 'rb'), encoding='utf-8')
             writefile = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writefile.writeheader()
-            ids = []
+            urls = []
             for item in to_add + to_update:
-                ids.append(item['url'])
+                urls.append(item['url'])
                 #print item
                 writefile.writerow(item)
 
             for item in current_items:
-                if item['url'] not in ids:
+                if item['url'] not in urls:
                     if args.verbose:
                         print "NEW", item['url']
                     writefile.writerow(item)
