@@ -11,7 +11,7 @@ from shutil import copyfile
 def addtocsv_fromargs(args):
     """ 
         >>> args = build_parser(['--verbose', 'tests/project-longform.csv', 'tests/data.csv'])
-        >>> addtocsv(args)
+        >>> addtocsv_fromargs(args)
         NEW http://interactive.nydailynews.com/2016/12/NYPD-Cold-Case-Squad-faces-daunting-challenges/
         >>> copyfile('tests/bk.csv', args.files[0][1])
         """
@@ -21,61 +21,63 @@ def addtocsv_fromargs(args):
 def addtocsv(new_file, current_file):
     """ Given two filepaths, open the files, compare the items in the file,
         and add any items that are new.
+        >>> addtocsv('tests/project-longform.csv', 'tests/data.csv')
+        NEW http://interactive.nydailynews.com/2016/12/NYPD-Cold-Case-Squad-faces-daunting-challenges/
         """
-        new = csv.DictReader(file(new_file, 'rb'), encoding='utf-8')
-        current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
+    new = csv.DictReader(file(new_file, 'rb'), encoding='utf-8')
+    current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
 
-        # Loop through each item in the new csv.
-        # If the new item isn't in the current, add it.
-        # If the new item is already in the current but has some changes, overwrite the current's item.
-        to_add = []
-        to_update = []
-        urls = []
-        current_items = []
-        # For each item in the 'new' csv, loop through each item in the current.
-        for i, new in enumerate(new):
-            for j, existing in enumerate(current):
-                current_items.append(existing)
-                if new['url'] == existing['url']:
-                    if new['url'] not in urls:
-                        urls.append(new['url'])
-                        to_update.append(new)
-                        # *** TODO: See if there are differences in the record and only if there are make a change
-                else:
-                    if new['url'] not in urls:
-                        if args.verbose:
-                            print "NEW", new['url']
-                        urls.append(new['url'])
-                        to_add.append(new)
-            else:
+    # Loop through each item in the new csv.
+    # If the new item isn't in the current, add it.
+    # If the new item is already in the current but has some changes, overwrite the current's item.
+    to_add = []
+    to_update = []
+    urls = []
+    current_items = []
+    # For each item in the 'new' csv, loop through each item in the current.
+    for i, new in enumerate(new):
+        for j, existing in enumerate(current):
+            current_items.append(existing)
+            if new['url'] == existing['url']:
                 if new['url'] not in urls:
                     urls.append(new['url'])
+                    to_update.append(new)
+                    # *** TODO: See if there are differences in the record and only if there are make a change
+            else:
+                if new['url'] not in urls:
+                    if args.verbose:
+                        print "NEW", new['url']
+                    urls.append(new['url'])
                     to_add.append(new)
+        else:
+            if new['url'] not in urls:
+                urls.append(new['url'])
+                to_add.append(new)
 
-        # Eliminate duplicates
-        #current_items = list(set(current_items))
+    # Eliminate duplicates
+    #current_items = list(set(current_items))
 
-        # Write the current csv
-        # First write all the update & additions, and record the id's.
-        # Then loop through the existing records and if we haven't already written them, write 'em.
-        with open(current_file, 'rb') as csvfile:
-            h = csv.reader(csvfile)
-            fieldnames = h.next()
-            del h
+    # Write the current csv
+    # First write all the update & additions, and record the id's.
+    # Then loop through the existing records and if we haven't already written them, write 'em.
+    with open(current_file, 'rb') as csvfile:
+        h = csv.reader(csvfile)
+        fieldnames = h.next()
+        del h
 
-        with open(current_file, 'wb') as csvfile:
-            current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
-            writefile = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writefile.writeheader()
-            urls = []
-            for item in to_add + to_update:
-                urls.append(item['url'])
-                #print item
+    with open(current_file, 'wb') as csvfile:
+        current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
+        writefile = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writefile.writeheader()
+        urls = []
+        for item in to_add + to_update:
+            urls.append(item['url'])
+            #print item
+            writefile.writerow(item)
+
+        for item in current_items:
+            if item['url'] not in urls:
                 writefile.writerow(item)
-
-            for item in current_items:
-                if item['url'] not in urls:
-                    writefile.writerow(item)
 
 def main(args):
     addtocsv_fromargs(args)
