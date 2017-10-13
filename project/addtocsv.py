@@ -6,10 +6,11 @@ import doctest
 import argparse
 import unicodecsv as csv
 from cStringIO import StringIO
+from shutil import copyfile
 
 def addtocsv(args):
     """ 
-        >>> args = build_parser(['tests/data.csv', 'tests/project-longform.csv'])
+        >>> args = build_parser(['--verbose', 'tests/project-longform.csv', 'tests/data.csv'])
         >>> addtocsv(args)
         """
     if len(args.files[0]) > 1:
@@ -26,17 +27,17 @@ def addtocsv(args):
         for i, new in enumerate(new):
             for j, existing in enumerate(current):
                 current_items.append(existing)
-                if new['id'] == existing['id']:
-                    if new['id'] not in ids:
-                        ids.append(new['id'])
+                if new['url'] == existing['url']:
+                    if new['url'] not in ids:
+                        ids.append(new['url'])
                         to_update.append(new)
                 else:
-                    if new['id'] not in ids:
-                        ids.append(new['id'])
+                    if new['url'] not in ids:
+                        ids.append(new['url'])
                         to_add.append(new)
             else:
-                if new['id'] not in ids:
-                    ids.append(new['id'])
+                if new['url'] not in ids:
+                    ids.append(new['url'])
                     to_add.append(new)
 
         # Write the current csv
@@ -53,14 +54,14 @@ def addtocsv(args):
             writefile.writeheader()
             ids = []
             for item in to_add + to_update:
-                ids.append(item['id'])
+                ids.append(item['url'])
                 #print item
                 writefile.writerow(item)
 
             for item in current_items:
-                if item['id'] not in ids:
+                if item['url'] not in ids:
                     if args.verbose:
-                        print "NEW", item['id']
+                        print "NEW", item['url']
                     writefile.writerow(item)
 
 def main(args):
