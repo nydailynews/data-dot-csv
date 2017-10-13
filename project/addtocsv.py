@@ -12,10 +12,10 @@ def addtocsv(args):
     """ 
         >>> args = build_parser(['--verbose', 'tests/project-longform.csv', 'tests/data.csv'])
         >>> addtocsv(args)
+        NEW http://interactive.nydailynews.com/2016/12/NYPD-Cold-Case-Squad-faces-daunting-challenges/
         >>> copyfile('tests/bk.csv', args.files[0][1])
         """
     if len(args.files[0]) > 1:
-        print args.files[0]
         new = csv.DictReader(file(args.files[0][0], 'rb'), encoding='utf-8')
         current = csv.DictReader(file(args.files[0][1], 'rb'), encoding='utf-8')
 
@@ -26,6 +26,7 @@ def addtocsv(args):
         to_update = []
         urls = []
         current_items = []
+        # For each item in the 'new' csv, loop through each item in the current.
         for i, new in enumerate(new):
             for j, existing in enumerate(current):
                 current_items.append(existing)
@@ -33,14 +34,20 @@ def addtocsv(args):
                     if new['url'] not in urls:
                         urls.append(new['url'])
                         to_update.append(new)
+                        # *** TODO: See if there are differences in the record and only if there are make a change
                 else:
                     if new['url'] not in urls:
+                        if args.verbose:
+                            print "NEW", new['url']
                         urls.append(new['url'])
                         to_add.append(new)
             else:
                 if new['url'] not in urls:
                     urls.append(new['url'])
                     to_add.append(new)
+
+        # Eliminate duplicates
+        #current_items = list(set(current_items))
 
         # Write the current csv
         # First write all the update & additions, and record the id's.
@@ -62,8 +69,6 @@ def addtocsv(args):
 
             for item in current_items:
                 if item['url'] not in urls:
-                    if args.verbose:
-                        print "NEW", item['url']
                     writefile.writerow(item)
 
 def main(args):
