@@ -8,7 +8,7 @@ import unicodecsv as csv
 from cStringIO import StringIO
 from shutil import copyfile
 
-def addtocsv(args):
+def addtocsv_fromargs(args):
     """ 
         >>> args = build_parser(['--verbose', 'tests/project-longform.csv', 'tests/data.csv'])
         >>> addtocsv(args)
@@ -16,8 +16,14 @@ def addtocsv(args):
         >>> copyfile('tests/bk.csv', args.files[0][1])
         """
     if len(args.files[0]) > 1:
-        new = csv.DictReader(file(args.files[0][0], 'rb'), encoding='utf-8')
-        current = csv.DictReader(file(args.files[0][1], 'rb'), encoding='utf-8')
+        addtocsv(args.files[0][0], args.files[0][1])
+
+def addtocsv(new_file, current_file):
+    """ Given two filepaths, open the files, compare the items in the file,
+        and add any items that are new.
+        """
+        new = csv.DictReader(file(new_file, 'rb'), encoding='utf-8')
+        current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
 
         # Loop through each item in the new csv.
         # If the new item isn't in the current, add it.
@@ -52,13 +58,13 @@ def addtocsv(args):
         # Write the current csv
         # First write all the update & additions, and record the id's.
         # Then loop through the existing records and if we haven't already written them, write 'em.
-        with open(args.files[0][1], 'rb') as csvfile:
+        with open(current_file, 'rb') as csvfile:
             h = csv.reader(csvfile)
             fieldnames = h.next()
             del h
 
-        with open(args.files[0][1], 'wb') as csvfile:
-            current = csv.DictReader(file(args.files[0][1], 'rb'), encoding='utf-8')
+        with open(current_file, 'wb') as csvfile:
+            current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
             writefile = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writefile.writeheader()
             urls = []
@@ -72,7 +78,7 @@ def addtocsv(args):
                     writefile.writerow(item)
 
 def main(args):
-    addtocsv(args)
+    addtocsv_fromargs(args)
 
 def build_parser(args):
     """ A method to handle argparse.
