@@ -6,11 +6,17 @@ import os, sys
 import doctest
 import json
 from addtocsv import addtocsv
+from collections import OrderedDict
 
 def main(args):
-    """ Loop through the files in the csv directory, concatenating and saving to the deploy directory.
+    """ Loop through the files in the csv directory,
+        concatenating and saving to the deploy directory.
         """
-    for dirname, dirnames, filenames in os.walk('csv/'):
+    base_dir = 'csv'
+    if args.base_dir:
+        base_dir = args.base_dir
+
+    for dirname, dirnames, filenames in os.walk('%s/' % base_dir):
         for subdirname in dirnames:
             if args.verbose:
                 print dirname, subdirname
@@ -19,7 +25,7 @@ def main(args):
         project = dirnames[-1]
         parent = None
         if project != dirnames[0]:
-            parent = os.path.join('build', dirnames[0], 'data.csv')
+            parent = os.path.join(base_dir, dirnames[0], 'data.csv')
         
         # Run through all the non-data.csv files first, do data.csv last
         # because we need that to be complete if we're going to be importing it
@@ -28,7 +34,7 @@ def main(args):
         for filename in filenames:
             if 'csv' not in filename:
                 continue
-            if 'project' in filename:
+            if 'category' in filename:
                 project = os.path.join(dirname, filename)
             if 'special' in filename:
                 special = os.path.join(dirname, filename)
@@ -51,6 +57,7 @@ def build_parser(args):
                                      epilog='Examply use: python deploy.py')
     parser.add_argument("-v", "--verbose", dest="verbose", default=False, action="store_true")
     parser.add_argument("--test", dest="test", default=False, action="store_true")
+    parser.add_argument("-b", "--base_dir", dest="base_dir", default=None)
     parser.add_argument("--freeze", dest="do_freeze", default=False, action="store_true",
                         help="Take a snaphot of the site before uploading.")
     args = parser.parse_args(args)
