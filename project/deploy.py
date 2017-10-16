@@ -35,7 +35,7 @@ def main(args):
             if 'csv' not in filename:
                 continue
             if 'category' in filename:
-                project = os.path.join(dirname, filename)
+                category = os.path.join(dirname, filename)
             if 'special' in filename:
                 special = os.path.join(dirname, filename)
                 
