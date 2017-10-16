@@ -16,16 +16,30 @@ def main(args):
     if args.base_dir:
         base_dir = args.base_dir
 
-    for dirname, dirnames, filenames in os.walk('%s/' % base_dir):
-        for subdirname in dirnames:
-            if args.verbose:
-                print dirname, subdirname
+    """ This is the order the CSVs are processed:
+            csv/ data.csv
+            csv/longform data.csv
+            csv/poll data.csv
+            csv/poll/keep-em-dump-em data.csv
+            csv/project data.csv
+            csv/quiz category-subway.csv
+            csv/quiz data.csv
+    """
+    for dirname, subdirs, filenames in os.walk('%s/' % base_dir):
+        #for subdirname in subdirs:
+        #    if args.verbose:
+        #        print dirname, subdirname
 
         dirnames = dirname.split('/')[1:]
         project = dirnames[-1]
         parent = None
+        dir_depth = len(dirnames)
         if project != dirnames[0]:
             parent = os.path.join(base_dir, dirnames[0], 'data.csv')
+
+        # Keep track of the root-dir CSV in a separate var.
+        if dirname == 'csv/':
+            root = os.path.join(dirname, 'data.csv')
         
         # Run through all the non-data.csv files first, do data.csv last
         # because we need that to be complete if we're going to be importing it
@@ -40,7 +54,7 @@ def main(args):
                 special = os.path.join(dirname, filename)
                 
             if args.verbose:
-                print dirname, filename
+                print dir_depth, dirname, filename
 
         if parent:
             # Add the above csv to the parent.
