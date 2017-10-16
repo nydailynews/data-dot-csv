@@ -46,6 +46,8 @@ if [ -d "$PROJECT" ]; then rm -fr $PROJECT; fi
 
 #python tests.py && \
 html_only && \
+    cp -fr csv build && \
+    python deploy.py && \
     python freeze.py && \
     mv build $PROJECT && \
     scp -r $PROJECT $SERVER:$DIR && \

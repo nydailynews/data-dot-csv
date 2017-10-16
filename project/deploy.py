@@ -8,6 +8,8 @@ import json
 from addtocsv import addtocsv
 
 def main(args):
+    """ Loop through the files in the csv directory, concatenating and saving to the deploy directory.
+        """
     for dirname, dirnames, filenames in os.walk('csv/'):
         for subdirname in dirnames:
             if args.verbose:
@@ -17,13 +19,15 @@ def main(args):
         project = dirnames[-1]
         parent = None
         if project != dirnames[0]:
-            parent = os.path.join('csv', dirnames[0], 'data.csv')
+            parent = os.path.join('build', dirnames[0], 'data.csv')
         
         # Run through all the non-data.csv files first, do data.csv last
         # because we need that to be complete if we're going to be importing it
         # anywhere else.
         # Note that this assumes a two-tier-at-most deep directory tree.
         for filename in filenames:
+            if 'csv' not in filename:
+                continue
             if 'project' in filename:
                 project = os.path.join(dirname, filename)
             if 'special' in filename:
