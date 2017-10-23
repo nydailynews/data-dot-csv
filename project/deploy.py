@@ -32,8 +32,14 @@ def main(args):
 
         dirnames = dirname.split('/')[1:]
         project = dirnames[-1]
-        parent = None
+        root, parent = None, None
         dir_depth = len(dirnames)
+
+        # This happens when we're in the root dir.
+        if project == '':
+            root = '%s/data.csv' % base_dir
+
+        # This will be false when we're in a sub-sub dir, such as the "keep-em-dump-em" inside the "poll" dir.
         if project != dirnames[0]:
             parent = os.path.join(base_dir, dirnames[0], 'data.csv')
 
@@ -68,7 +74,7 @@ def build_parser(args):
         """
     parser = argparse.ArgumentParser(usage='$ python deploy.py',
                                      description='Concatenate the CSV files for production',
-                                     epilog='Examply use: python deploy.py')
+                                     epilog='Example use: python deploy.py')
     parser.add_argument("-v", "--verbose", dest="verbose", default=False, action="store_true")
     parser.add_argument("--test", dest="test", default=False, action="store_true")
     parser.add_argument("-b", "--base_dir", dest="base_dir", default=None)
