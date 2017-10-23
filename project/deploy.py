@@ -35,10 +35,6 @@ def main(args):
         root, parent = None, None
         dir_depth = len(dirnames)
 
-        # This happens when we're in the root dir.
-        if project == '':
-            root = '%s/data.csv' % base_dir
-
         # This will be false when we're in a sub-sub dir, such as the "keep-em-dump-em" inside the "poll" dir.
         if project != dirnames[0]:
             parent = os.path.join(base_dir, dirnames[0], 'data.csv')
