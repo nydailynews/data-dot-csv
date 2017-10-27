@@ -24,6 +24,8 @@ def main(args):
             csv/project data.csv
             csv/quiz category-subway.csv
             csv/quiz data.csv
+        Special csv's we don't do anything with.
+        Categories get concatenated into their sibling data.csv's first, then into their parent data.csv's second.
     """
     for dirname, subdirs, filenames in os.walk('%s/' % base_dir):
         #for subdirname in subdirs:
@@ -52,6 +54,9 @@ def main(args):
                 continue
             if 'category' in filename:
                 category = os.path.join(dirname, filename)
+                sibling = os.path.join(dirname, 'data.csv')
+                if not os.path.isfile(sibling):
+                    sibling = None
             if 'special' in filename:
                 special = os.path.join(dirname, filename)
                 
