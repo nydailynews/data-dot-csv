@@ -74,18 +74,25 @@ def addtocsv(new_file, current_file):
     # Then loop through the existing records and if we haven't already written them, write 'em.
     fieldnames = get_fieldnames(current_file)
 
+    if args.verbose:
+        print "WRITING TO %s" % current_file
+
     with open(current_file, 'wb') as csvfile:
-        current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
+        #current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
         writefile = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writefile.writeheader()
         urls = []
         for item in to_add + to_update:
             urls.append(item['url'])
             #print item
+            if args.verbose:
+                print "WRITING NEW %s" % item['url']
             writefile.writerow(item)
 
         for item in current_items:
             if item['url'] not in urls:
+                if args.verbose:
+                    print "WRITING EXISTING %s" % item['url']
                 writefile.writerow(item)
 
 def main(args):
