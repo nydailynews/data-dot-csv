@@ -12,11 +12,22 @@ def addtocsv_fromargs(args):
     """ 
         >>> args = build_parser(['--verbose', 'tests/project-longform.csv', 'tests/data.csv'])
         >>> addtocsv_fromargs(args)
-        NEW http://interactive.nydailynews.com/2016/12/NYPD-Cold-Case-Squad-faces-daunting-challenges/
         >>> copyfile('tests/bk.csv', args.files[0][1])
         """
     if len(args.files[0]) > 1:
         addtocsv(args.files[0][0], args.files[0][1])
+
+def get_fieldnames(fp):
+    """ Given a file pointer (fp), return an array of fieldnames.
+        Assumes fieldnames are in the first row.
+        >>> print get_fieldnames('tests/data.csv')
+        [u'year', u'datestamp', u'title', u'url']
+        """
+    with open(fp, 'rb') as csvfile:
+        h = csv.reader(csvfile)
+        fieldnames = h.next()
+        del h
+    return fieldnames
 
 def addtocsv(new_file, current_file):
     """ Given two filepaths, open the files, compare the items in the file,
@@ -55,15 +66,13 @@ def addtocsv(new_file, current_file):
                 to_add.append(new)
 
     # Eliminate duplicates
+    #print current_items
     #current_items = list(set(current_items))
 
     # Write the current csv
     # First write all the update & additions, and record the id's.
     # Then loop through the existing records and if we haven't already written them, write 'em.
-    with open(current_file, 'rb') as csvfile:
-        h = csv.reader(csvfile)
-        fieldnames = h.next()
-        del h
+    fieldnames = get_fieldnames(current_file)
 
     with open(current_file, 'wb') as csvfile:
         current = csv.DictReader(file(current_file, 'rb'), encoding='utf-8')
