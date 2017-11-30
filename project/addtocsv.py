@@ -7,6 +7,8 @@ import argparse
 import unicodecsv as csv
 from cStringIO import StringIO
 from shutil import copyfile
+from operator import itemgetter
+
 
 def addtocsv_fromargs(args):
     """ 
@@ -82,17 +84,12 @@ def addtocsv(new_file, current_file):
         writefile = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writefile.writeheader()
         urls = []
-        for item in to_add + to_update:
-            urls.append(item['url'])
-            #print item
-            if args.verbose:
-                print "WRITING NEW %s" % item['url']
-            writefile.writerow(item)
-
-        for item in current_items:
+        sorted_items = sorted(to_add + to_update + current_items, key=itemgetter('datestamp'), reverse=True)
+        for item in sorted_items:
             if item['url'] not in urls:
+                urls.append(item['url'])
                 if args.verbose:
-                    print "WRITING EXISTING %s" % item['url']
+                    print "WRITING ITEM %s" % item['url']
                 writefile.writerow(item)
 
 def main(args):
