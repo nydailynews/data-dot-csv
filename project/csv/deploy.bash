@@ -1,0 +1,1 @@
+scp -r . prod:/apps/
